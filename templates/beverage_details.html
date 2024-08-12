@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <h2>{{ beverage.name }}</h2>
+      </div>
+      <div class="col-12">
+        <a href="{% url 'index.html' %}">Home</a>
+        <a href="{% url 'beverages.html' %}">Beverages</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <img src="{{ beverage.image.url }}" class="img-fluid" alt="{{ beverage.name }}">
+    </div>
+    <div class="col-md-6">
+      <h3>{{ beverage.name }}</h3>
+      <p>{{ beverage.description }}</p>
+      <h5>₹{{ beverage.price }}</h5>
+      <p>Total Price: ₹<span id="total-price">{{ beverage.price }}</span></p>
+      <div class="container d-flex align-items-center py-3">
+        <div class="px-5">
+          <button class="btn btn-primary" onclick="addToCart({{ beverage.id }}, '{{ beverage.name }}')">Add to Cart</button>
+        </div>
+        <div>
+          <select name="quantity" class="px-3" id="quantity" onchange="updateTotalPrice()">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+        <small class="text-info px-3">Buy 5 or more and get 10% off!</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container py-5">
+  <h3>Related Beverages</h3>
+  <div class="row">
+    {% for related_beverage in related_beverages %}
+    {% if related_beverage.id < 5 and related_beverage.id > 1 %}
+    <div class="col-md-4">
+      <div class="card">
+        <img src="{{ related_beverage.image.url }}" class="card-img-top" alt="{{ related_beverage.name }}">
+        <div class="card-body">
+          <h5 class="card-title">{{ related_beverage.name }}</h5>
+          <p class="card-text">₹{{ related_beverage.price }}</p>
+          <a href="{% url 'beverage_details' related_beverage.id %}" class="btn btn-primary">View More</a>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+<div class="share py-5 container">
+  <h3 class="py-2">Share this beverage:</h3>
+  <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" class="btn btn-primary">Facebook</a>
+  <a href="https://twitter.com/share?url={{ request.build_absolute_uri }}&text={{ beverage.name }}" class="btn btn-primary">Twitter</a>
+</div>
+
+<script>
+function updateTotalPrice() {
+    let quantity = document.getElementById('quantity').value;
+    let price = parseFloat({{ beverage.price }});
+    let totalPrice = quantity * price;
+
+    // Apply 10% discount if quantity is 5 or more
+    if (quantity >= 5) {
+        totalPrice = totalPrice * 0.9;
+    }
+
+    document.getElementById('total-price').textContent = totalPrice.toFixed(2);
+}
+
+function addToCart(beverageId, beverageName) {
+    let price = parseFloat({{ beverage.price }});
+    let quantity = parseInt(document.getElementById('quantity').value);
+    let totalPrice = parseFloat(document.getElementById('total-price').textContent);
+    let imageUrl = document.querySelector(`img[alt='${beverageName}']`).src;
+
+    let cartDetails = {
+        item_id: beverageId,
+        name: beverageName,
+        price: price,
+        quantity: quantity,
+        totalPrice: totalPrice,
+        image: imageUrl
+    };
+
+    // Save to local storage
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cart.push(cartDetails);
+    localStorage.setItem('cart', JSON.stringify(cart));
+
+    // Send to server
+    fetch("{% url 'add_to_cart' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify(cartDetails)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Item added to cart!');
+            window.location.href = "{% url 'cart_details' %}";
+        } else {
+            alert('Error adding item to cart.');
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+
+function updateCart(itemId) {
+    let quantity = parseInt(document.getElementById(`quantity-${itemId}`).value);
+    let totalPrice = parseFloat(document.getElementById(`total-price-${itemId}`).textContent);
+
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    for (let item of cart) {
+        if (item.item_id === itemId) {
+            item.quantity = quantity;
+            item.totalPrice = totalPrice;
+            break;
+        }
+    }
+    localStorage.setItem('cart', JSON.stringify(cart));
+
+    let cartDetails = {
+        item_id: itemId,
+        quantity: quantity,
+        totalPrice: totalPrice
+    };
+
+    fetch("{% url 'update_cart' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify(cartDetails)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            location.reload(); // Reload the page to see the updated cart
+        } else {
+            alert('Error updating cart.');
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+
+function deleteFromCart(itemId) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cart = cart.filter(item => item.item_id !== itemId);
+    localStorage.setItem('cart', JSON.stringify(cart));
+
+    let cartDetails = {
+        item_id: itemId
+    };
+
+    fetch("{% url 'delete_from_cart' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify(cartDetails)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            location.reload(); // Reload the page to see the updated cart
+        } else {
+            alert('Error removing item from cart.');
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+</script>
+{% endblock %}

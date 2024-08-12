@@ -1,0 +1,105 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+
+
+<div class="page-header">
+  <div class="container">
+      <div class="row">
+          <div class="col-12">
+              <h2>User Profile</h2>
+          </div>
+          <div class="col-12">
+              <a href="">Home</a>
+              <a href="">Profile</a>
+          </div>
+      </div>
+  </div>
+</div>
+
+<div class="breadcumb-area">
+  <div class="container h-100">
+    <div class="row h-100 align-items-end">
+      <div class="col-12">
+        <div class="breadcumb--con">
+          <h2 class="title">Profile</h2>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <a href="{% url 'index.html' %}"><i class="fa fa-home"></i> Home</a>
+              </li>
+              <li class="breadcrumb-item active" aria-current="page">Profile</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Profile Page Start -->
+
+  <div class="row mt-3">
+    <div class="col">
+      <header>
+        {% if user.is_authenticated %}
+        <p>
+          Hello, {{ user.username }}! |
+          <a href="{% url 'change_password' %}" class="btn btn-primary btn-sm"
+            >Change Password</a
+          >
+          |
+          <a href="{% url 'logout' %}" class="btn btn-danger btn-sm">Logout</a>
+        </p>
+        {% endif %}
+      </header>
+    </div>
+  </div>
+
+  <table class="table table-bordered">
+    <tbody>
+        <tr>
+            <th>First Name</th>
+            <td>{{ user.userprofile.fname }}</td>
+        </tr>
+        <tr>
+            <th>Last Name</th>
+            <td>{{ user.userprofile.lname }}</td>
+        </tr>
+        <tr>
+            <th>Bio</th>
+            <td>{{ user.userprofile.bio }}</td>
+        </tr>
+        <tr>
+            <th>Email</th>
+            <td>{{ user.userprofile.email }}</td>
+        </tr>
+        <tr>
+            <th>Birthdate</th>
+            <td>{{ user.userprofile.birthdate }}</td>
+        </tr>
+        <tr>
+            <th>Contact</th>
+            <td>{{ user.userprofile.contact }}</td>
+        </tr>
+        <tr>
+            <th>Gender</th>
+            <td>{{ user.userprofile.gender }}</td>
+        </tr>
+        <tr>
+            <th>Address</th>
+            <td>{{ user.userprofile.address }}</td>
+        </tr>
+    </tbody>
+</table>
+
+  <div class="row mt-3">
+    <div class="col">
+      <a href="{% url 'edit_profile_user' %}" class="btn btn-info"
+        >Edit Profile</a
+      >
+    </div>
+  </div>
+</div>
+<!-- Privacy End -->
+<br><br>
+{% endblock content %}

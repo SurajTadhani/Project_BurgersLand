@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+        
+        <!-- Page Header Start -->
+        <div class="page-header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <h2>Master Chef</h2>
+                    </div>
+                    <div class="col-12">
+                        <a href="">Home</a>
+                        <a href="">Chef</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Page Header End -->
+        
+
+        <!-- Team Start -->
+        <div class="team">
+            <div class="container">
+                <div class="section-header text-center">
+                    <p>Our Team</p>
+                    <h2>Our Master Chef</h2>
+                </div>
+                <div class="row">
+                    {% for s in ourteam %}
+                    <div class="col-lg-4">
+                        <div class="team-item">
+                            <div class="team-img" >
+                                <img style="height: 28rem;" class="img-fluid" src="{{s.profile_picture.url}}" alt="Image">
+                                <div class="team-social">
+                                    {% if s.twitter_url %}
+                                    <a href="{{ s.twitter_url }}"><i class="fab fa-twitter"></i></a>
+                                    {% endif %}
+                                    {% if s.facebook_url %}
+                                    <a href="{{ s.facebook_url }}"><i class="fab fa-facebook-f"></i></a>
+                                    {% endif %}
+                                    {% if s.linkedin_url %}
+                                    <a href="{{ s.linkedin_url }}"><i class="fab fa-linkedin-in"></i></a>
+                                    {% endif %}
+                                    {% if s.instagram_url %}
+                                    <a href="{{ s.instagram_url }}"><i class="fab fa-instagram"></i></a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="team-text">
+                                <h2><a href="{% url 'team_member_detail' s.pk %}">{{ s.name }}</a></h2>
+                                <p>{{ s.position }}</p>
+                            </div>
+                        </div>
+                        </div>
+                    {% endfor %}
+                   
+                   
+                </div>
+            </div>
+        </div>
+        <!-- Team End -->
+
+
+     {% endblock %}

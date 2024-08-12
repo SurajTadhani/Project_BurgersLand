@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<!-- Page Header Start -->
+<div class="page-header">
+  <div class="container">
+      <div class="row">
+          <div class="col-12">
+              <h2>Sign Up</h2>
+          </div>
+          <div class="col-12">
+              <a href="">Home</a>
+              <a href="">Signup</a>
+          </div>
+      </div>
+  </div>
+</div>
+<!-- Page Header End -->
+<div class="container mt-4">
+  <div class="col-md-8 text-start">
+      <div id="success"></div>
+      <h1>Sign Up</h1>
+      <form method="POST">
+          {% csrf_token %}
+          <div class="control-group my-4">
+              <label for="username"><b>Username</b></label>
+              <input type="text" class="form-control" name="username" placeholder="Username" required="required" data-validation-required-message="Please enter your name" value="{{ form.username.value|default_if_none:'' }}" />
+              {% if form.username.errors %}
+              <small class="text-danger">{{ form.username.errors }}</small>
+              {% endif %}
+          </div>
+          <div class="row my-4">
+              <div class="control-group col-md-6">
+                  <label for="first_name"><b>First Name</b></label>
+                  <input type="text" class="form-control" name="first_name" placeholder="First Name" required="required" data-validation-required-message="Please enter your first name" value="{{ form.first_name.value|default_if_none:'' }}" />
+                  {% if form.first_name.errors %}
+                  <small class="text-danger">{{ form.first_name.errors }}</small>
+                  {% endif %}
+              </div>
+              <div class="control-group col-md-6">
+                  <label for="last_name"><b>Last Name</b></label>
+                  <input type="text" class="form-control" name="last_name" placeholder="Last Name" required="required" data-validation-required-message="Please enter your last name" value="{{ form.last_name.value|default_if_none:'' }}" />
+                  {% if form.last_name.errors %}
+                  <small class="text-danger">{{ form.last_name.errors }}</small>
+                  {% endif %}
+              </div>
+          </div>
+          <div class="control-group my-4">
+              <label for="email"><b>Email</b></label>
+              <input type="email" class="form-control" name="email" placeholder="Your Email" required="required" data-validation-required-message="Please enter your email" value="{{ form.email.value|default_if_none:'' }}" />
+              {% if form.email.errors %}
+              <small class="text-danger">{{ form.email.errors }}</small>
+              {% endif %}
+          </div>
+          <div class="control-group my-4">
+              <label for="password1"><b>Password</b></label>
+              <input type="password" class="form-control" name="password1" placeholder="Password" required="required" data-validation-required-message="Please enter a password" />
+              {% if form.password1.errors %}
+              <small class="text-danger">{{ form.password1.errors }}</small>
+              {% endif %}
+          </div>
+          <div class="control-group my-4">
+              <label for="password2"><b>Confirm Password</b></label>
+              <input type="password" class="form-control" name="password2" placeholder="Confirm Password" required="required" data-validation-required-message="Please confirm your password" />
+              {% if form.password2.errors %}
+              <small class="text-danger">{{ form.password2.errors }}</small>
+              {% endif %}
+          </div>
+          
+          <div class='d-flex justify-content-between align-items-center'>
+            <div>
+                <button class="btn custom-btn" type="submit">Sign Up</button>
+            </div>
+            <div>
+                <span class='text-black'>Already Have an Account&nbsp;</span>
+                <a class="text-primary" href="{% url 'login' %}">Log In</a>
+               </div>
+          </div>
+      </form>
+      {% if messages %}
+      {% for message in messages %}
+      <div class="alert alert-info mt-4">{{ message }}</div>
+      {% endfor %}
+      {% endif %}
+  </div>
+</div>
+
+
+{% endblock %}

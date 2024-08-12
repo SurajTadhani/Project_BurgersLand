@@ -1,0 +1,63 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+
+<style>
+  table,
+  th,
+  td {
+    border: 1px solid black;
+    padding: 10px;
+    color: black;
+  }
+  th {
+  }
+</style>
+<!-- Page Header Start -->
+<div class="page-header">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <h2>Welcome Our Comment section</h2>
+      </div>
+      <div class="col-12">
+        <a href="">Home</a>
+        <a href="">Comment</a>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Page Header End -->
+<div class="text-center">
+  <center>
+    <table>
+      <thead>
+        <tr>
+          <th>name</th>
+          <th>Email</th>
+          <th>Website</th>
+          <th>Message</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in data %}
+        <tr>
+          <th scope="row">{{ forloop.counter }}</th>
+          <td>{{i.name}}</td>
+          <td>{{i.email}}</td>
+          <td>{{i.website}}</td>
+          <td>{{i.message}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </center>
+</div>
+
+<div class="text-center pt-5">
+  <a
+    href="{% url 'index.html' %}"
+    class="bg-warning text-white rounded p-2 border-2"
+    >Back To Home</a
+  >
+</div>
+
+{% endblock %}

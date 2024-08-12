@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+        <!-- Page Header Start -->
+        <div class="page-header mb-0">
+          <div class="container">
+              <div class="row">
+                  <div class="col-12">
+                      <h2>Team_Member_Details</h2>
+                  </div>
+                  <div class="col-12">
+                      <a href="">Home</a>
+                      <a href="">Team_Details</a>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <!-- Page Header End -->
+
+
+<div class="container pt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <img src="{{ team_member.profile_picture.url }}" class="img-fluid" alt="{{ team_member.name }}">
+        </div>
+        <div class="col-md-8">
+            <h2>{{ team_member.name }}</h2>
+            <h4>{{ team_member.position }}</h4>
+            <p>{{ team_member.biography }}</p>
+            <h5>Skills</h5>
+            <p>{{ team_member.skills }}</p>
+            <h5>Experience</h5>
+            <p>{{ team_member.experience }}</p>
+            
+           
+            <h5>Achievements</h5>
+            <p>{{ team_member.achievements }}</p>
+            <h5>Personal Interests</h5>
+            <p>{{ team_member.personal_interests }}</p>
+            <h5>Contact</h5>
+            <p>Email: <a href="mailto:{{ team_member.contact_email }}">{{ team_member.contact_email }}</a></p>
+            <div class="team-social">
+                {% if team_member.twitter_url %}
+                <a class="px-3" href="{{ team_member.twitter_url }}"><i class="fab fa-twitter"></i></a>
+                {% endif %}
+                {% if team_member.facebook_url %}
+                <a class="px-3" href="{{ team_member.facebook_url }}"><i class="fab fa-facebook-f"></i></a>
+                {% endif %}
+                {% if team_member.linkedin_url %}
+                <a class="px-3" href="{{ team_member.linkedin_url }}"><i class="fab fa-linkedin-in"></i></a>
+                {% endif %}
+                {% if team_member.instagram_url %}
+                <a class="px-3" href="{{ team_member.instagram_url }}"><i class="fab fa-instagram"></i></a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

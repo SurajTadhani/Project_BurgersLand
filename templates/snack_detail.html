@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="page-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2>Snack Details</h2>
+            </div>
+            <div class="col-12">
+                <a href="{% url 'index.html' %}">Home</a>
+                <a href="{% url 'snacks.html' %}">Snacks</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    {% for snack in snack %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <img src="{{ snack.image.url }}" alt="{{ snack.name }}" class="img-fluid" id="image-{{ forloop.counter0 }}">
+            </div>
+            <div class="col-md-6">
+                <a href="snack_detail/{{ snack.name }}"><h1>{{ snack.name }}</h1></a>
+                <p>Description: {{ snack.description }}</p>
+                <p class="fs-1">Price: ₹<span id="price-{{ forloop.counter0 }}">{{ snack.price }}</span></p>
+                <p class="fs-1">Total Price: ₹<span id="total-price-{{ forloop.counter0 }}">{{ snack.price }}</span></p>
+                <div class="container d-flex align-items-center py-3">
+                    <div class="px-5">
+                        <button class="btn btn-primary" id="add-to-cart-{{ forloop.counter0 }}" onclick="addToCart({{ forloop.counter0 }}, '{{ snack.name }}', '{{ snack.category }}')">Add to Cart</button><br>
+                    </div>
+                    <div>
+                        <select name="quantity" class="px-3" id="quantity-{{ forloop.counter0 }}" onchange="updateTotalPrice({{ forloop.counter0 }})">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                    <small class="text-info px-3">Buy 5 or more and get 10% off!</small>
+                </div>
+            </div>
+        </div>
+        <h3 class="py-4">Nutritional Information</h3>
+        <div class="row">
+            <div class="col-md-6">
+                <ul>
+                    <li>Calories: {{ snack.nutrition.calories }}</li>
+                    <li>Fats: {{ snack.nutrition.fats }}g</li>
+                    <li>Proteins: {{ snack.nutrition.proteins }}g</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <ul>
+                    <li>Carbohydrates: {{ snack.nutrition.carbs }}g</li>
+                    <li>Vitamins: {{ snack.nutrition.vitamins }}</li>
+                    <li>Minerals: {{ snack.nutrition.minerals }}</li>
+                </ul>
+            </div>
+        </div>
+        <h3>Availability: {{ snack.availability }}</h3>
+    </div>
+    {% endfor %}
+    <div class="py-5">
+        <h3 class="py-3">Related Items</h3>
+        <div class="row">
+            {% for related_snack in related_snacks %}
+            {% if related_snack.id <= 3 %}
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="{{ related_snack.image.url }}" class="card-img-top" alt="{{ related_snack.name }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ related_snack.name }}</h5>
+                        <button class="btn btn-primary">View More</button>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="share py-5">
+        <h3 class="py-2">Share this snack:</h3>
+        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" class="btn btn-primary">Facebook</a>
+        <a href="https://twitter.com/share?url={{ request.build_absolute_uri }}&text={{ snack.name }}" class="btn btn-primary">Twitter</a>
+    </div>
+</div>
+</div>
+
+<script>
+    function updateTotalPrice(index) {
+        let quantity = document.getElementById(`quantity-${index}`).value;
+        let price = parseFloat(document.getElementById(`price-${index}`).textContent);
+        let totalPrice = quantity * price;
+    
+        // Apply 10% discount if quantity is 5 or more
+        if (quantity >= 5) {
+            totalPrice = totalPrice * 0.9;
+        }
+    
+        document.getElementById(`total-price-${index}`).textContent = totalPrice.toFixed(2);
+    }
+    
+    function addToCart(index, snackName, category) {
+        let price = parseFloat(document.getElementById(`price-${index}`).textContent);
+        let quantity = parseInt(document.getElementById(`quantity-${index}`).value);
+        let totalPrice = parseFloat(document.getElementById(`total-price-${index}`).textContent);
+        let imageUrl = document.querySelector(`img[alt='${snackName}']`).src;
+        let id = `item-${index}`; // Unique ID for the item
+    
+        let cartDetails = {
+            id: id,
+            name: snackName,
+            price: price,
+            quantity: quantity,
+            totalPrice: totalPrice,
+            image: imageUrl,
+            category: category
+        };
+    
+        // Save to local storage
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        cart.push(cartDetails);
+        localStorage.setItem('cart', JSON.stringify(cart));
+    
+        // Send to server
+        fetch("{% url 'add_to_cart' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify(cartDetails)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Item added to cart!');
+                window.location.href = "{% url 'cart_details' %}";
+            } else {
+                alert('Error adding item to cart.');
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+    
+    function updateCart(index) {
+        let quantity = parseInt(document.getElementById(`quantity-${index}`).value);
+        let totalPrice = parseFloat(document.getElementById(`total-price-${index}`).textContent);
+        let id = `item-${index}`; // Unique ID for the item
+    
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        for (let item of cart) {
+            if (item.id === id) {
+                item.quantity = quantity;
+                item.totalPrice = totalPrice;
+                break;
+            }
+        }
+        localStorage.setItem('cart', JSON.stringify(cart));
+    
+        let cartDetails = {
+            id: id,
+            quantity: quantity,
+            totalPrice: totalPrice
+        };
+    
+        fetch("{% url 'update_cart' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify(cartDetails)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                location.reload(); // Reload the page to see the updated cart
+            } else {
+                alert('Error updating cart.');
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+    
+    function deleteFromCart(index) {
+        let id = `item-${index}`; // Unique ID for the item
+    
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        cart = cart.filter(item => item.id !== id);
+        localStorage.setItem('cart', JSON.stringify(cart));
+    
+        let cartDetails = {
+            id: id
+        };
+    
+        fetch("{% url 'delete_from_cart' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify(cartDetails)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                location.reload(); // Reload the page to see the updated cart
+            } else {
+                alert('Error removing item from cart.');
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+    </script>
+    
+{% endblock %}

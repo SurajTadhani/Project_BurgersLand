@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="page-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2>Pizza Details</h2>
+            </div>
+            <div class="col-12">
+                <a href="{% url 'index.html' %}">Home</a>
+                <a href="{% url 'pizza.html' %}">Pizza</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    {% for pizza in Pizza %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <img style="width: auto;" class="img-fluid" src="{{ pizza.image.url }}" alt="{{ pizza.name }}">
+            </div>
+            <div class="col-md-6">
+                <h1>{{ pizza.name }}</h1>
+                <p>Description: {{ pizza.description }}</p>
+                <p class="fs-1">Price: ₹<span id="price-{{ forloop.counter0 }}">{{ pizza.price }}</span></p>
+                <p class="fs-1">Total Price: ₹<span id="total-price-{{ forloop.counter0 }}">{{ pizza.price }}</span></p>
+                <div class="container d-flex align-items-center py-3">
+                    <div class="px-5">
+                        <button class="btn btn-primary" id="add-to-cart-{{ forloop.counter0 }}" onclick="addToCart({{ forloop.counter0 }}, '{{ pizza.name }}')">Add to Cart</button><br>
+                    </div>
+                    <div>
+                        <select name="quantity" class="px-3" id="quantity-{{ forloop.counter0 }}" onchange="updateTotalPrice({{ forloop.counter0 }})">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                    <small class="text-info px-3">Buy 5 or more and get 10% off!</small>
+                </div>
+            </div>
+        </div>
+        <h3 class="py-4">Nutritional Information</h3>
+        <div class="row">
+            {% for i in Pizzanutrition %}
+            <div class="col-md-6">
+                <ul>
+                    <li>Calories: {{ i.calories }}g</li>
+                    <li>Fats: {{ i.fat }}g</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <ul>
+                    <li>Carbohydrates: {{ i.carbohydrates }}g</li>
+                    <li>Protein: {{ i.protein }}</li>
+                </ul>
+            </div>
+            {% endfor %}
+        </div>
+        <h3>Availability: {{ pizza.availability }}</h3>
+    </div>
+    {% endfor %}
+    <div class="py-5">
+        <h3 class="py-3">Related Items</h3>
+        <div class="row py-5">
+            {% for related_pizza in related_pizza %}
+            {% if related_pizza.id|divisibleby:2 and related_pizza.id < 9 %}
+            <div class="col-md-4 py-5">
+                <div class="card">
+                    <img style="height: 14rem" src="{{ related_pizza.image.url }}" class="card-img-top" alt="{{ related_pizza.name }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ related_pizza.name }}</h5>
+                        <button class="btn btn-primary">View More</button>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="share py-5 container">
+        <h3 class="py-2">Share this snack:</h3>
+        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" class="btn btn-primary">Facebook</a>
+        <a href="https://twitter.com/share?url={{ request.build_absolute_uri }}&text={{ pizza.name }}" class="btn btn-primary">Twitter</a>
+    </div>
+</div>
+</div>
+
+<script>
+    function updateTotalPrice(index) {
+        let quantity = document.getElementById(`quantity-${index}`).value;
+        let price = parseFloat(document.getElementById(`price-${index}`).textContent.replace('$', ''));
+        let totalPrice = quantity * price;
+    
+        // Apply 10% discount if quantity is 5 or more
+        if (quantity >= 5) {
+            totalPrice = totalPrice * 0.9;
+        }
+    
+        document.getElementById(`total-price-${index}`).textContent = totalPrice.toFixed(2);
+    }
+    
+    function addToCart(index, pizzaName) {
+        let price = parseFloat(document.getElementById(`price-${index}`).textContent.replace('$', ''));
+        let quantity = parseInt(document.getElementById(`quantity-${index}`).value);
+        let totalPrice = parseFloat(document.getElementById(`total-price-${index}`).textContent);
+        let imageUrl = document.querySelector(`img[alt='${pizzaName}']`).src;
+    
+        let cartDetails = {
+            item_id: index,
+            name: pizzaName,
+            price: price,
+            quantity: quantity,
+            totalPrice: totalPrice,
+            image: imageUrl
+        };
+    
+        // Save to local storage
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        cart.push(cartDetails);
+        localStorage.setItem('cart', JSON.stringify(cart));
+    
+        // Send to server
+        fetch("{% url 'add_to_cart' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify(cartDetails)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            alert('Item added to cart!');
+            window.location.href = "{% url 'cart_details' %}";
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+</script>
+
+{% endblock %}

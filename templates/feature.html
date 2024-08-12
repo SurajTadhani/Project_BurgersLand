@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+        
+        
+        <!-- Page Header Start -->
+        <div class="page-header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <h2>Why Choose Us</h2>
+                    </div>
+                    <div class="col-12">
+                        <a href="">Home</a>
+                        <a href="">Features</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Page Header End -->
+        
+
+        <!-- Feature Start -->
+        <div class="feature">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-5">
+                        <div class="section-header">
+                            <p>Why Choose Us</p>
+                            <h2>Our Key Features</h2>
+                        </div>
+                        <div class="feature-text">
+                            <div class="feature-img">
+                                <div class="row">
+                                    {% for s in featureimg %}
+                                    <div class="col-6">
+                                        <img src="{{s.img.url}}" alt="Image">
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <p>
+                                Lorem ipsum dolor sit amet consec adipis elit. Phasel nec preti mi. Curabit facilis ornare velit non vulputa. Aliquam metus tortor, auctor id gravida condime, viverra quis sem. Curabit non nisl nec nisi sceleri maximus 
+                            </p>
+                            <a class="btn custom-btn" href="{% url 'booking.html' %}">Book A Table</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-7">
+                        <div class="row">
+                            {% for s in featuremenu %}
+                            <div class="col-sm-6">
+                                <div class="feature-item">
+                                    <i class="{{s.name}}"></i>
+                                    <h3>{{s.header}}</h3>
+                                    <p>
+                                        {{s.content}}
+                                    </p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                           
+                        </div>
+                        <div class="row">
+                            {% for s in featuremenu1 %}
+                            <div class="col-sm-6">
+                                <div class="feature-item">
+                                    <i class="{{s.name}}"></i>
+                                    <h3>{{s.header}}</h3>
+                                    <p>
+                                        {{s.content}}
+                                    </p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                           
+                        </div>
+                        <div class="row">
+                            {% for s in featuremenu2 %}
+                            <div class="col-sm-6">
+                                <div class="feature-item">
+                                    <i class="{{s.name}}"></i>
+                                    <h3>{{s.header}}</h3>
+                                    <p>
+                                        {{s.content}}
+                                    </p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Feature End -->
+
+
+      {% endblock %}

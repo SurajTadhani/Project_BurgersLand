@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+        
+        
+        <!-- Page Header Start -->
+        <div class="page-header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <h2>Thank You!</h2>
+                    </div>
+                    <div class="col-12">
+                        <a href="{% url 'index.html' %}">Home</a>
+                        <a href="">thanks</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Page Header End -->
+
+        <div class="text-center">
+         <p style="font-size: 35px;" class=" text-center fw-bold text-dark">Thank you your data has been submited! Contact Our Team shortly! </p>
+         <a href="{% url 'index.html' %}" class="bg-warning text-white rounded p-2 border-2">Back To Home</a>
+        </div>
+       
+        
+        
+       
+
+     {% endblock %}

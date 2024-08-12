@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+
+   <!-- Page Header Start -->
+   <div class="page-header mb-0">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2>Book A Table</h2>
+            </div>
+            <div class="col-12">
+                <a href="">Home</a>
+                <a href="">Booking</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Page Header End -->
+
+<div class="booking">
+  <div class="container">
+      <div class="row align-items-center">
+          
+          <div class="col-lg-6">
+              <div class="booking-form" id="booktable">
+                  <h1>Book a Reservation</h1>
+                  <form method="post" id="booking-form">
+                    {% csrf_token %}
+                    <div class="control-group">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name='name' placeholder="Name" required="required" />
+                            <div class="input-group-append">
+                                <div class="input-group-text"><i class="far fa-user"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="input-group">
+                            <input type="email" name="email" class="form-control" placeholder="Email" required="required" />
+                            <div class="input-group-append">
+                                <div class="input-group-text"><i class="far fa-envelope"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="input-group">
+                            <input type="text" name="mobile_number" class="form-control" placeholder="Mobile" required="required" />
+                            <div class="input-group-append">
+                                <div class="input-group-text"><i class="fa fa-mobile-alt"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="input-group">
+                            <input type="text" id="total-price-field" name="amount" class="form-control" placeholder="Total Amount" value="{{ total_price }}" readonly />
+                            <div class="input-group-append">
+                                <div class="input-group-text"><i class="fa fa-rupee-sign"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn custom-btn" type="submit">Pay Now</button>
+                    </div>
+                </form>
+                  <div>
+                    {% if razorpay_payment %}
+                
+                <form method="POST" action="{% url 'payment_status' %}">
+                {% csrf_token %}
+                <script
+                src="https://checkout.razorpay.com/v1/checkout.js"
+                data-key="rzp_test_VQhEfe2NCXbbwI"
+                data-amount="{{ razorpay_payment.amount }}"
+                data-currency="INR"
+                data-order_id="{{ razorpay_payment.order_id }}"
+                data-buttontext="Pay Now With razorpay  "
+                data-name="Arc"
+                data-description="A Wild Sheep Chase is the third novel by Japanese author Haruki Murakami"
+                data-image="https://example.com/your_logo.jpg"
+                data-prefill.name="{{ razorpay_payment.name }}"
+                data-prefill.email="gaurav.kumar@example.com"
+                data-theme.color="#F37254"
+                ></script>
+                
+                <input type="hidden" custom="Hidden Element" name="hidden" />
+                </form>
+                
+                
+                {% endif %}
+                
+                </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+
+
+{% endblock %}

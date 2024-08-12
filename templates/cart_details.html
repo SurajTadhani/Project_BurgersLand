@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2>Cart Details</h2>
+            </div>
+            <div class="col-12">
+                <a href="{% url 'index.html' %}">Home</a>
+                <a href="{% url 'cart_details' %}">Cart Details</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <h2>Your Cart</h2>
+    {% if cart_items %}
+    <div class="container">
+       
+        <div class="row py-5">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Image</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Actions</th>
+                        <th scope="col">Total Price</th>
+                    </tr>
+                </thead>
+                {% for item in cart_items %}
+                <tbody>
+                    <tr>
+                        <td>
+                            <img src="{{ item.image }}" alt="{{ item.name }}" class="img-fluid" style="max-width: 200px;">
+                        </td>
+                        <td>
+                            <h5>{{ item.name }}</h5>
+                        </td>
+                        <td>
+                            <h6>₹<span id="price-{{ forloop.counter0 }}">{{ item.price }}</span></h6>
+                        </td>
+                        <td>
+                            <input type="number" min="1" value="{{ item.quantity }}" id="quantity-{{ forloop.counter0 }}" onchange="updateTotalPrice({{ forloop.counter0 }})">
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-around align-items-center">
+                                <button class="btn btn-primary mx-1" onclick="updateCart('{{ item.name }}', {{ forloop.counter0 }})">
+                                    <i class="fas fa-sync-alt"></i> 
+                                </button>
+                                <button class="btn btn-danger mx-1" onclick="deleteFromCart('{{ item.name }}')">
+                                    <i class="fas fa-trash-alt"></i> 
+                                </button>
+                            </div>
+                        </td>
+                        <td>
+                            ₹<span id="total-price-{{ forloop.counter0 }}">{{ item.total_price }}</span>
+                        </td>
+                        
+                    </tr>
+                </tbody>
+                {% endfor %}
+            </table>
+            
+            
+          
+        </div>
+       
+    </div>
+    <div class="">
+        <div class="d-flex justify-content-end  offset-md-6">
+            <hr>
+            <h4>Total Cart Price: ₹<span id="total-cart-price">{{ total_cart_price }}</span></h4>
+          
+        </div>
+           
+        </div>
+        <div class="d-flex justify-content-between py-4">
+            <a href="{% url 'menu.html' %}" class="btn btn-primary">Back to Menu</a>
+            <button class="btn btn-primary" onclick="redirectToPayment()">Proceed to Payment</button>
+            
+        </div>
+    </div>
+    {% else %}
+    <p>Your cart is empty.</p>
+    {% endif %}
+   
+</div>
+
+<script>
+    function updateTotalPrice(index) {
+        let quantity = document.getElementById(`quantity-${index}`).value;
+        let price = parseFloat(document.getElementById(`price-${index}`).textContent);
+        let totalPrice = quantity * price;
+    
+        document.getElementById(`total-price-${index}`).textContent = totalPrice.toFixed(2);
+        updateTotalCartPrice(); // Update total cart price after individual item update
+    }
+    
+    function updateCart(name, index) {
+        let quantity = document.getElementById(`quantity-${index}`).value;
+        let totalPrice = parseFloat(document.getElementById(`total-price-${index}`).textContent);
+        let imageUrl = document.querySelector(`img[alt='${name}']`).src; // Get the image URL
+    
+        let cartDetails = {
+            name: name,
+            quantity: quantity,
+            totalPrice: totalPrice,
+            image: imageUrl // Include the image URL
+        };
+    
+        fetch("{% url 'update_cart' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify(cartDetails)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            alert('Cart updated!');
+            location.reload(); // Reload the page to see the updated cart
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        })
+        .finally(() => {
+            updateTotalCartPrice(); // Update total cart price after updating item
+        });
+    }
+    
+    function deleteFromCart(name) {
+        let cartDetails = {
+            name: name
+        };
+    
+        fetch("{% url 'delete_from_cart' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify(cartDetails)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            alert('Item removed from cart!');
+            location.reload(); // Reload the page to see the updated cart
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        })
+        .finally(() => {
+            updateTotalCartPrice(); // Update total cart price after deleting item
+        });
+    }
+    
+    // Initial calculation of total cart price
+    function updateTotalCartPrice() {
+        let totalCartPrice = 0;
+        let items = document.querySelectorAll('[id^="total-price-"]');
+    
+        items.forEach((item, index) => {
+            let itemTotalPrice = parseFloat(item.textContent);
+            totalCartPrice += itemTotalPrice;
+        });
+    
+        document.getElementById('total-cart-price').textContent = totalCartPrice.toFixed(2);
+    }
+
+    document.addEventListener("DOMContentLoaded", updateTotalCartPrice);
+
+    function redirectToPayment() {
+        // Get the total cart price from the DOM
+        const totalPrice = document.getElementById('total-cart-price').innerText;
+        // Round off the total price to the nearest integer
+        const roundedTotalPrice = Math.round(parseFloat(totalPrice));
+        // Redirect to the payment page with the rounded total price as a query parameter
+        window.location.href = "{% url 'payment_order' %}?total=" + roundedTotalPrice;
+    }
+</script>
+
+
+
+{% endblock %}

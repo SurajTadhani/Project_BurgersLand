@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+
+<div class="page-header">
+  <div class="container">
+      <div class="row">
+          <div class="col-12">
+              <h2>Edit Profile</h2>
+          </div>
+          <div class="col-12">
+              <a href="">Home</a>
+              <a href="">Edit_Profile</a>
+          </div>
+      </div>
+  </div>
+</div>
+
+<div class="breadcumb-area">
+    <div class="container h-100">
+      <div class="row h-100 align-items-end">
+        <div class="col-12">
+          <div class="breadcumb--con">
+            <h2 class="title">Edit Profile</h2>
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                  <a href="{% url 'index.html' %}"><i class="fa fa-home"></i> Home</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                  Edit Profile
+                </li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+          <form method="post">
+            {% csrf_token %}
+            <table class="table table-bordered">
+                {% for field in form %}
+                <tr>
+                    <th>{{ field.label }}</th>
+                    <td>
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="text-danger">
+                                {{ field.errors }}
+                            </div>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+        </div>
+    </div>
+</div>
+<br><br>
+{% endblock %}

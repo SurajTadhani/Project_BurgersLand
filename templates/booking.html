@@ -1,0 +1,303 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+        
+        <!-- Page Header Start -->
+        <div class="page-header mb-0">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <h2>Book A Table</h2>
+                    </div>
+                    <div class="col-12">
+                        <a href="">Home</a>
+                        <a href="">Booking</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Page Header End -->
+        
+
+        <!-- Booking Start -->
+        <div class="booking">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-7">
+                        <div class="booking-content">
+                            {% for s in bookTable %}
+                            <div class="section-header">
+                                <p>{{s.name}}</p>
+                                <h2>{{s.heading}}</h2>
+                            </div>
+                            <div class="about-text">
+                                <p>
+                                    {{s.content}}
+                                </p>
+                                <p>
+                                    {{s.content1}}
+                            </div>
+                       {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="booking-form" id="booktable">
+                            <h1>Book a Reservation</h1>
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="control-group">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name='name' placeholder="Name" required="required" />
+                                        <div class="input-group-append">
+                                            <div class="input-group-text"><i class="far fa-user"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <div class="input-group">
+                                        <input type="email" name="email" class="form-control" placeholder="Email" required="required" />
+                                        <div class="input-group-append">
+                                            <div class="input-group-text"><i class="far fa-envelope"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <div class="input-group">
+                                        <input type="text" name="mobile_number" class="form-control" placeholder="Mobile" required="required" />
+                                        <div class="input-group-append">
+                                            <div class="input-group-text"><i class="fa fa-mobile-alt"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <div class="input-group date" id="date" data-target-input="nearest">
+                                        <input type="date" name="date" class="form-control datetimepicker-input" placeholder="Date" required="required"/>
+                                        <div class="input-group-append">
+                                            <div class="input-group-text"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <div class="input-group" data-target-input="nearest">
+                                        <input type="time" name="time" class="form-control" placeholder="Time" required="required"/>
+                                        <div class="input-group-append">
+                                            <div class="input-group-text"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <div class="input-group">
+                                        <select name="guest_count" class="custom-select form-control text-dark" required="required">
+                                            <option value="" selected disabled>Guest</option>
+                                            <option value="1">1 Guest</option>
+                                            <option value="2">2 Guests</option>
+                                            <option value="3">3 Guests</option>
+                                            <option value="4">4 Guests</option>
+                                            <option value="5">5 Guests</option>
+                                        </select>
+                                        <div class="input-group-append">
+                                            <div class="input-group-text"><i class="fa fa-chevron-down"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button class="btn custom-btn" type="submit">Book Now</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Booking End -->
+        
+        
+        <!-- Menu Start -->
+        <div class="menu">
+            <div class="container">
+                <div class="section-header text-center">
+                    <p>Food Menu</p>
+                    <h2>Delicious Food Menu</h2>
+                </div>
+                <div class="menu-tab">
+                    <ul class="nav nav-pills justify-content-center">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="pill" href="#burgers">Burgers</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#snacks">Snacks</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#beverages">Beverages</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#pizza">Pizza</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="burgers" class="container tab-pane active">
+                            <div class="row">
+                                <div class="col-lg-7 col-md-12">
+                                    {% for s in foodmenu %}
+                                    <div class="menu-item">
+                                        <div class="menu-img">
+                                            <img src="{{s.image.url}}" alt="Image">
+                                        </div>
+                                        <div class="menu-text">
+                                            <h3><span>{{s.header}}</span> <strong>{{s.price}}</strong></h3>
+                                            <p>{{s.content}}</p>
+                                        </div>
+                                        </div>
+                                        {% endfor %}
+                                        <h4><a href="{% url 'burgers.html' %}">More Items...</a></h4>
+                                </div>
+                                <div class="col-lg-5 d-none d-lg-block">
+                                    <img src="{% static 'img/menu-burger-img.jpg' %}" alt="Image">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="snacks" class="container tab-pane fade">
+                            <div class="row">
+                                <div class="col-lg-7 col-md-12">
+                                    {% for i in snackitems %}
+                                    <div class="menu-item">
+                                        <div class="menu-img">
+                                            <img src="{{i.image.url}}" alt="Image">
+                                        </div>
+                                        <div class="menu-text">
+                                            <h3><span>{{i.header}}</span> <strong>{{i.price}}</strong></h3>
+                                            <p>{{i.content}}</p>
+                                        </div>
+                                        
+                                    </div>
+                                   {% endfor %}
+                                  <h4>  <a href="{% url 'snacks.html' %}">More Items...</a></h4>
+                                </div>
+                                <div class="col-lg-5 d-none d-lg-block">
+                                    <img src="{% static 'img/menu-snack-img.jpg' %}" alt="Image">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="beverages" class="container tab-pane fade">
+                            <div class="row">
+                                <div class="col-lg-7 col-md-12">
+                                    {% for i in beveragesitems %}
+                                    <div class="menu-item">
+                                        <div class="menu-img">
+                                            <img src="{{i.image.url}}" alt="Image">
+                                        </div>
+                                        <div class="menu-text">
+                                            <h3><span>{{i.header}}</span> <strong>{{i.price}}</strong></h3>
+                                            <p>{{i.content}}</p>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                   
+                                    <h4><a href="{% url 'beverages.html' %}">More Items...</a></h4>
+                                </div>
+                                <div class="col-lg-5 d-none d-lg-block">
+                                    <img src="{% static 'img/menu-beverage-img.jpg' %}" alt="Image">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="pizza" class="container tab-pane fade">
+                            <div class="row">
+                                <div class="col-lg-7 col-md-12">
+                                    <div class="menu-item">
+                                        <div class="menu-img">
+                                            <img src="https://images.pexels.com/photos/1566837/pexels-photo-1566837.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Image">
+                                        </div>
+                                        <div class="menu-text">
+                                            <h3><span>Single Cup Brew</span> <strong>₹70.00</strong></h3>
+                                            <p>Lorem ipsum dolor sit amet elit. Phasel nec preti facil</p>
+                                        </div>
+                                    </div>
+                                    {% for i in pizzaitems %}
+                                    <div class="menu-item">
+                                        <div class="menu-img">
+                                            <img src="{{i.image.url}}" alt="Image">
+                                        </div>
+                                        <div class="menu-text">
+                                            <h3><span>{{i.header}}</span> <strong>{{i.price}}</strong></h3>
+                                            <p>{{i.content}}</p>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                    
+                                    <h4><a href="{% url 'pizza.html' %}">More Items...</a></h4>
+                                </div>
+                                <div class="col-lg-5 d-none d-lg-block">
+                                    <img class="w-100" src="https://images.pexels.com/photos/845808/pexels-photo-845808.jpeg?auto=compress&cs=tinysrgb&w=600" alt="%Image">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Menu End -->
+
+
+        <!-- content start -->
+         <div class="container">
+        <div>
+            <h1>Booking Your Table at Burger King</h1>
+            <p>Welcome to Burger King’s table booking service! We are delighted to offer you the convenience of reserving your table online to ensure that your dining experience is smooth and enjoyable. Whether you're planning a family gathering, a casual lunch with friends, or a special celebration, we are here to make your visit to Burger King memorable.</p>
+        </div>
+        <div>
+            <h2>Why Book with Us?</h2>
+            <p>At Burger King, we believe in delivering the best dining experience. Booking your table in advance provides numerous benefits:</p>
+            <div>
+               <p><h6>1.Guaranteed Seating:</h6> Avoid the wait and secure your favorite spot at our restaurant.</p>
+               <p><h6>2.Special Requests: </h6> Let us know if you have any special dietary requirements or need assistance with seating arrangements.</p>
+               <p><h6>3.Group Reservations: </h6> Planning a big get-together? Reserve a table for large groups and enjoy our spacious seating arrangements.</p>
+               <p><h6>4.Exclusive Offers:</h6> Get access to special promotions and discounts available only for online bookings.</p>
+            </div>
+            <div>
+                <h2>How to Book Your Table :</h2>
+                <p>Booking your table at Burger King is quick and easy. Follow these simple steps:</p>
+               <article>
+                <p><h6>1.Select Your Location:</h6>  Choose the Burger King restaurant closest to you from our list of locations.
+                </p>
+                <p><h6>2.Pick a Date and Time: </h6>Select the date and time that suits you best for your visit.</p>
+                <p><h6>3.Provide Your Details:</h6> Fill in your contact information and any special requests you may have.</p>
+                <p><h6>4.Confirm Your Booking: </h6>Review your reservation details and confirm your booking. You will receive a confirmation email with all the details of your reservation.</p>
+               </article>
+            </div>
+            <div>
+                <article>
+                    <h2>Celebrate Special Occasions</h2>
+                    <p>Burger King is the perfect place to celebrate your special moments. Whether it’s a birthday, anniversary, or any other milestone, we offer special packages to make your celebration extra special. Contact us to learn more about our party packages and customized menu options.</p>
+                </article>
+            </div>
+            <div>
+                <article>
+                    <h2>Contact Us</h2>
+                    <p>If you have any questions or need further assistance with your booking, feel free to contact us:</p>
+                    <h5>Phone: +91588845585</h5>
+                    <h5>Email: burgers@gmail.com</h5>
+                </article>
+            </div>
+            <div>
+                <h2>Customer Reviews</h2>
+                <p>Don’t just take our word for it! Here’s what our customers have to say about their dining experience at Burger King:</p>
+                <article>
+                    <p><h6>John D.: </h6> "Booking online was so convenient, and our table was ready when we arrived. The staff was friendly, and the food was delicious!"
+                    </p>
+                    <p><h6>Sarah L.:</h6>  "We booked a table for my son's birthday party, and Burger King made it a memorable event. The kids loved it!"
+                    </p>
+                    <p><h6>Mike T.:</h6>   "No waiting time and excellent service. The online booking system is a game-changer."
+                    </p>
+                </article>
+            </div>
+            <div>
+                <h3 class="text-warning pt-5">Thank you for choosing Burger King. We look forward to serving you and making your visit a delightful experience. Book your table now and enjoy the King’s feast!</h3>
+            </div>
+        </div>
+         </div>
+        <!-- content end -->
+
+
+       {% endblock %}

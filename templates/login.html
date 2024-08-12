@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+
+<!-- Page Header Start -->
+<div class="page-header">
+  <div class="container">
+      <div class="row">
+          <div class="col-12">
+              <h2>Login</h2>
+          </div>
+          <div class="col-12">
+              <a href="">Home</a>
+              <a href="">Login</a>
+          </div>
+      </div>
+  </div>
+</div>
+<!-- Page Header End -->
+
+<div class="mt-5 d-flex justify-content-center">
+ 
+    <div class="col-md-6">
+        <div id="success"></div>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="control-group">
+                <label for="">UserName</label>
+                <input type="text" class="form-control" name="username" placeholder="UserName" required="required" data-validation-required-message="Please enter your name" />
+                <p class="help-block text-danger"></p>
+            </div>
+            <div class="control-group">
+                <label for="">Password</label>
+                <input type="password" class="form-control" name="password" placeholder="Password" required="required"  />
+                <p class="help-block text-danger"></p>
+            </div>
+            <div class="py-3 text-start d-flex justify-content-between">
+                <a class="text-dark"  href="{% url 'reset_password' %}">Reset Password...</a>
+                <a href="{% url 'register' %}"><span class='text-dark'>New User! Create Account <span class='text-primary'>Signup</span></span></a>
+            </div>
+            <div>
+                <button class="btn custom-btn" type="submit">Login</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+
+
+{% endblock %}

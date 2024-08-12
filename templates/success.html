@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    <div class="my-5 py-5">
+      <div class="container py-5 my-5 mt-5 text-center">
+        <h1>Payment Successful!</h1>
+       <p>Thank you for your purchase. Your payment has been successfully processed.</p>
+       <div class="container d-flex justify-content-between align-items-center">
+        <a href="{% url 'index.html' %}" class="bg-warning text-white rounded p-2 border-2">Back To Home</a>
+       <a href="{% url 'menu.html' %}" class="btn btn-primary">Continue Shopping</a>
+       </div>
+    </div>
+
+    <script>
+      // Clear local storage when the payment is successful
+      if ({{ status|yesno:"true,false" }}) {
+          localStorage.clear();
+         
+      }
+  </script>
+        
+    {% endblock %}
